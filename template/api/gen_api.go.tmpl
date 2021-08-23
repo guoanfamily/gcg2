@@ -1,0 +1,52 @@
+// generate by gcg2
+package api
+
+import (
+  "net/http"
+  "github.com/ilibs/gosql/v2"
+  "github.com/labstack/echo/v4"
+  "log"
+  "{{.ProjectName}}/model/{{underline .DBName}}"
+)
+
+func (a *Api){{upperCamel .TableName}}Save(c echo.Context) error {
+    obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+    err :=c.Bind(obj)
+    if err!=nil{
+    	return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+    }
+    return c.JSON(http.StatusOK,gosql.Model(obj).Create())
+}
+
+func (a *Api){{upperCamel .TableName}}Update(c echo.Context) error {
+obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+err :=c.Bind(obj)
+if err!=nil{
+return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+}
+return c.JSON(http.StatusOK,gosql.Model(obj).Update())
+}
+
+func (a *Api){{upperCamel .TableName}}Delete(c echo.Context) error {
+obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+err :=c.Bind(obj)
+if err!=nil{
+return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+}
+return c.JSON(http.StatusOK,gosql.Model(obj).Delete())
+}
+
+func (a *Api){{upperCamel .TableName}}List(c echo.Context) error {
+obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+objs := make({{underline .DBName}}.{{upperCamel .TableName}}, 0)
+err := gosql.Model(&objs).Where(obj).All()
+if err != nil {
+log.Println(err.Error())
+}
+    return c.JSON(http.StatusOK,objs)
+}
+
+func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
+obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+return c.JSON(http.StatusOK,gosql.Model(obj).Get())
+}
