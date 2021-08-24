@@ -10,19 +10,17 @@ import (
 )
 
 func (a *Api){{upperCamel .TableName}}Save(c echo.Context) error {
-    obj :=&model.{{upperCamel .TableName}}{}
-    err :=c.Bind(obj)
-    if err!=nil{
-    	return c.JSON(http.StatusBadRequest, err.Error())
-    }
+obj :=&model.{{upperCamel .TableName}}{}
+if err :=c.Bind(obj);err!=nil{
+return c.JSON(http.StatusBadRequest, err.Error())
+}
 r,_:=gosql.Model(obj).Create()
 return c.JSON(http.StatusOK, r)
 }
 
 func (a *Api){{upperCamel .TableName}}Update(c echo.Context) error {
 obj :=&model.{{upperCamel .TableName}}{}
-err :=c.Bind(obj)
-if err!=nil{
+if err :=c.Bind(obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
 r,_:=gosql.Model(obj).Update()
@@ -31,8 +29,7 @@ return c.JSON(http.StatusOK, r)
 
 func (a *Api){{upperCamel .TableName}}Delete(c echo.Context) error {
 obj :=&model.{{upperCamel .TableName}}{}
-err :=c.Bind(obj)
-if err!=nil{
+if err :=c.Bind(obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
 r,_:=gosql.Model(obj).Delete()
@@ -41,15 +38,16 @@ return c.JSON(http.StatusOK, r)
 
 func (a *Api){{upperCamel .TableName}}List(c echo.Context) error {
 objs := make([]model.{{upperCamel .TableName}}, 0)
-err := gosql.Model(&objs).All()
-if err != nil {
+if err := gosql.Model(&objs).All();err!=nil{
 log.Println(err.Error())
 }
-    return c.JSON(http.StatusOK,objs)
+return c.JSON(http.StatusOK,objs)
 }
 
 func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
 obj :=&model.{{upperCamel .TableName}}{}
-gosql.Model(obj).Get()
+if err:=gosql.Model(obj).Get();err!=nil{
+log.Println(err.Error())
+}
 return c.JSON(http.StatusOK,obj)
 }
