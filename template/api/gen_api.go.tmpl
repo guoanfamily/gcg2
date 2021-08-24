@@ -50,5 +50,6 @@ log.Println(err.Error())
 
 func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
 obj :=&model.{{upperCamel .TableName}}{}
-return c.JSON(http.StatusOK,gosql.Model(obj).Get())
+gosql.Model(obj).Get()
+return c.JSON(http.StatusOK,obj)
 }
