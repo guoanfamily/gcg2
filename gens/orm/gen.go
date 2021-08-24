@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"fmt"
 	"gcg2/gens/common"
 	sh "github.com/codeskyblue/go-sh"
 	"gopkg.in/yaml.v2"
@@ -87,8 +88,12 @@ func Gen(dbFile string, name string, tbs string) {
 			db["ProjectName"] = getProjectFolderName()
 			genutils.GenFileWithTargetPath("main.go.tmpl", "main.go", db)
 			sh.Command("gofmt", "-w", ".", sh.Dir("")).Run()
-			sh.Command("go mod init", getProjectFolderName(), sh.Dir("")).Run()
-			sh.Command("go mod tidy", sh.Dir("")).Run()
+			if err := sh.Command("go", "mod", "init", getProjectFolderName(), sh.Dir("")).Run(); err != nil {
+				fmt.Println(err.Error())
+			}
+			if err := sh.Command("go", "mod", "tidy", sh.Dir("")).Run(); err != nil {
+				fmt.Println(err.Error())
+			}
 		}
 	}
 }
