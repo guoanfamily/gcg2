@@ -2,8 +2,8 @@ package genutils
 
 import (
 	"fmt"
+	"gcg2/gens/funcs"
 	sh "github.com/codeskyblue/go-sh"
-	"github.com/guoanfamily/gcg/gens/funcs"
 	"io/ioutil"
 	"log"
 	"os"

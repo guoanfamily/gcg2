@@ -2,14 +2,12 @@ package main
 
 import (
   "{{.ProjectName}}/api"
-"errors"
 "fmt"
 "github.com/ilibs/gosql/v2"
 "github.com/labstack/echo/v4"
 "github.com/labstack/echo/v4/middleware"
 _ "github.com/lib/pq"
 _ "github.com/go-sql-driver/mysql"
-"net/http"
 "reflect"
 )
 
@@ -25,7 +23,7 @@ e.Use(middleware.CORS())
 //Common routers
 e.POST("/:funcname", func(context echo.Context) error{
 funcname:=context.Param("funcname")
-method := reflect.ValueOf(&Api{}).MethodByName(funcname)
+method := reflect.ValueOf(&api.Api{}).MethodByName(funcname)
 err:=method.Call([]reflect.Value{reflect.ValueOf(context)})
 if !err[0].IsNil(){
 fmt.Println(err[0])

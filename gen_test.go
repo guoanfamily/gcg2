@@ -1,13 +1,12 @@
 package main
 
 import (
-	"github.com/guoanfamily/gcg/gens/common"
-	"github.com/guoanfamily/gcg/gens/orm"
-	"testing"
-	//"gcg/model/service"
 	"fmt"
+	"gcg2/gens/common"
+	"gcg2/gens/orm"
 	"os"
 	"strings"
+	"testing"
 )
 
 //go:generate go-bindata -o ./bindata.go -prefix "./template/" ./template/...

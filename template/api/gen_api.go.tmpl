@@ -6,40 +6,42 @@ import (
   "github.com/ilibs/gosql/v2"
   "github.com/labstack/echo/v4"
   "log"
-  "{{.ProjectName}}/model/{{underline .DBName}}"
+  "{{.ProjectName}}/model"
 )
 
 func (a *Api){{upperCamel .TableName}}Save(c echo.Context) error {
-    obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+    obj :=&model.{{upperCamel .TableName}}{}
     err :=c.Bind(obj)
     if err!=nil{
-    	return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+    	return c.JSON(http.StatusBadRequest, err.Error())
     }
-    return c.JSON(http.StatusOK,gosql.Model(obj).Create())
+r,_:=gosql.Model(obj).Create()
+return c.JSON(http.StatusOK, r)
 }
 
 func (a *Api){{upperCamel .TableName}}Update(c echo.Context) error {
-obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+obj :=&model.{{upperCamel .TableName}}{}
 err :=c.Bind(obj)
 if err!=nil{
-return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+return c.JSON(http.StatusBadRequest, err.Error())
 }
-return c.JSON(http.StatusOK,gosql.Model(obj).Update())
+r,_:=gosql.Model(obj).Update()
+return c.JSON(http.StatusOK, r)
 }
 
 func (a *Api){{upperCamel .TableName}}Delete(c echo.Context) error {
-obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+obj :=&model.{{upperCamel .TableName}}{}
 err :=c.Bind(obj)
 if err!=nil{
-return c.JSON(http.StatusOK, ResultMsg(400, err.Error(), ""))
+return c.JSON(http.StatusBadRequest, err.Error())
 }
-return c.JSON(http.StatusOK,gosql.Model(obj).Delete())
+r,_:=gosql.Model(obj).Delete()
+return c.JSON(http.StatusOK, r)
 }
 
 func (a *Api){{upperCamel .TableName}}List(c echo.Context) error {
-obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
-objs := make({{underline .DBName}}.{{upperCamel .TableName}}, 0)
-err := gosql.Model(&objs).Where(obj).All()
+objs := make([]model.{{upperCamel .TableName}}, 0)
+err := gosql.Model(&objs).All()
 if err != nil {
 log.Println(err.Error())
 }
@@ -47,6 +49,6 @@ log.Println(err.Error())
 }
 
 func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
-obj :=&{{underline .DBName}}.{{upperCamel .TableName}}{}
+obj :=&model.{{upperCamel .TableName}}{}
 return c.JSON(http.StatusOK,gosql.Model(obj).Get())
 }

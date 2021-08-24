@@ -106,21 +106,21 @@ func printHelp(usage string, commands, options, examples []string) {
 	fmt.Println()
 	fmt.Println(usage)
 	if len(commands) > 0 {
-		fmt.Println("\nCommands:\n")
+		fmt.Println("Commands:")
 		for _, s := range commands {
 			fmt.Println(fmt.Sprintf("\t%s", s))
 		}
 	}
 
 	if len(options) > 0 {
-		fmt.Println("\nOptions:\n")
+		fmt.Println("Options:")
 		for _, s := range options {
 			fmt.Println(fmt.Sprintf("\t%s", s))
 		}
 	}
 
 	if len(examples) > 0 {
-		fmt.Println("\nExamples:\n")
+		fmt.Println("Examples:")
 		for _, s := range examples {
 			fmt.Println(fmt.Sprintf("\t%s", s))
 		}

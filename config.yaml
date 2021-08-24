@@ -1,5 +1,5 @@
 - ProjectName: gcgtest
   Driver: postgres
-  Source : "user=postgres password=123 dbname=zhgd sslmode=disable host=localhost port=5432"
-  Table: "company_info,ebook"
+  Source : "user=postgres password=123 dbname=drill sslmode=disable host=localhost port=5432"
+  Table: "*"
   ServicePort: 9091
