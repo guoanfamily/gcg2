@@ -83,7 +83,7 @@ func Gen(dbFile string, name string, tbs string) {
 		sh.Command("gofmt", "-w", ".", sh.Dir("api")).Run()
 		if isInit {
 			//生成api层公共代码
-			genutils.GenFileWithTargetPath("api/api.go.tmpl", "api/api.go", nil)
+			genutils.GenFileWithTargetPath("api/api.go.tmpl", "api/api.go", db)
 			//生成main
 			db["ProjectName"] = getProjectFolderName()
 			genutils.GenFileWithTargetPath("main.go.tmpl", "main.go", db)

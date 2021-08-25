@@ -9,7 +9,7 @@ import (
   "{{.ProjectName}}/model"
 )
 
-func (a *Api){{upperCamel .TableName}}Save(c echo.Context) error {
+func (a *Api){{upperCamel .TableName}}Create(c echo.Context) error {
 obj :=&model.{{upperCamel .TableName}}{}
 if err :=c.Bind(obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
@@ -37,8 +37,13 @@ return c.JSON(http.StatusOK, r)
 }
 
 func (a *Api){{upperCamel .TableName}}List(c echo.Context) error {
+obj :=&model.{{upperCamel .TableName}}{}
+if err :=c.Bind(obj);err!=nil{
+return c.JSON(http.StatusBadRequest, err.Error())
+}
 objs := make([]model.{{upperCamel .TableName}}, 0)
-if err := gosql.Model(&objs).All();err!=nil{
+cond,arg:= structcond(obj)
+if err := gosql.Model(&objs).Where(cond,arg...).All();err!=nil{
 log.Println(err.Error())
 }
 return c.JSON(http.StatusOK,objs)
