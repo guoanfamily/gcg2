@@ -3,56 +3,59 @@ package api
 
 import (
   "net/http"
-  "github.com/ilibs/gosql/v2"
   "github.com/labstack/echo/v4"
   "log"
   "{{.ProjectName}}/model"
 )
 
 func (a *Api){{upperCamel .TableName}}Create(c echo.Context) error {
-obj :=&model.{{upperCamel .TableName}}{}
-if err :=c.Bind(obj);err!=nil{
+obj :=model.{{upperCamel .TableName}}{}
+if err :=c.Bind(&obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
-r,_:=gosql.Model(obj).Create()
-return c.JSON(http.StatusOK, r)
+res := Db.Create(&obj)
+return c.JSON(http.StatusOK, res.RowsAffected)
 }
 
 func (a *Api){{upperCamel .TableName}}Update(c echo.Context) error {
-obj :=&model.{{upperCamel .TableName}}{}
-if err :=c.Bind(obj);err!=nil{
+obj :=model.{{upperCamel .TableName}}{}
+if err :=c.Bind(&obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
-r,_:=gosql.Model(obj).Update()
-return c.JSON(http.StatusOK, r)
+res := Db.Updates(&obj)
+return c.JSON(http.StatusOK, res.RowsAffected)
 }
 
 func (a *Api){{upperCamel .TableName}}Delete(c echo.Context) error {
-obj :=&model.{{upperCamel .TableName}}{}
-if err :=c.Bind(obj);err!=nil{
+obj :=model.{{upperCamel .TableName}}{}
+if err :=c.Bind(&obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
-r,_:=gosql.Model(obj).Delete()
-return c.JSON(http.StatusOK, r)
+res := Db.Delete(&obj, obj.ID)
+return c.JSON(http.StatusOK, res.RowsAffected)
 }
 
 func (a *Api){{upperCamel .TableName}}List(c echo.Context) error {
-obj :=&model.{{upperCamel .TableName}}{}
-if err :=c.Bind(obj);err!=nil{
+obj :=model.{{upperCamel .TableName}}{}
+if err :=c.Bind(&obj);err!=nil{
 return c.JSON(http.StatusBadRequest, err.Error())
 }
 objs := make([]model.{{upperCamel .TableName}}, 0)
-cond,arg:= structcond(obj)
-if err := gosql.Model(&objs).Where(cond,arg...).All();err!=nil{
-log.Println(err.Error())
+res := Db.Where(&obj).Find(&objs)
+if res.Error != nil {
+log.Println(res.Error.Error())
 }
 return c.JSON(http.StatusOK,objs)
 }
 
 func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
-obj :=&model.{{upperCamel .TableName}}{}
-if err:=gosql.Model(obj).Get();err!=nil{
-log.Println(err.Error())
+obj :=model.{{upperCamel .TableName}}{}
+if err :=c.Bind(&obj);err!=nil{
+return c.JSON(http.StatusBadRequest, err.Error())
+}
+res := Db.Where(&obj).Take(&obj)
+if res.Error != nil {
+log.Println(res.Error.Error())
 }
 return c.JSON(http.StatusOK,obj)
 }

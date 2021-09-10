@@ -157,6 +157,9 @@ func Camel(s string) string {
 }
 
 func UpperCamel(s string) string {
+	if strings.EqualFold(s, "id") {
+		return "ID"
+	}
 	return CapitalizeFirst(Camel(s))
 }
 

@@ -2,14 +2,33 @@ package main
 
 import (
   "{{.ProjectName}}/api"
-"fmt"
-"github.com/ilibs/gosql/v2"
 "github.com/labstack/echo/v4"
 "github.com/labstack/echo/v4/middleware"
-_ "github.com/lib/pq"
+_ "gorm.io/driver/postgres"
+"gorm.io/gorm"
 _ "github.com/go-sql-driver/mysql"
 "reflect"
+"time"
 )
+
+func init(){
+dsn := "{{.Source}}"
+var err error
+api.Db, err = gorm.Open({{.Driver}}.Open(dsn), &gorm.Config{})
+if err != nil {
+panic("failed to connect database")
+}
+sqlDB, err := api.Db.DB()
+
+// SetMaxIdleConns 设置空闲连接池中连接的最大数量
+sqlDB.SetMaxIdleConns(10)
+
+// SetMaxOpenConns 设置打开数据库连接的最大数量。
+sqlDB.SetMaxOpenConns(100)
+
+// SetConnMaxLifetime 设置了连接可复用的最大时间。
+sqlDB.SetConnMaxLifetime(time.Hour)
+}
 
 func main(){
 // Echo instance
@@ -35,16 +54,3 @@ return nil
 e.Logger.Fatal(e.Start(":{{.ServicePort}}"))
 }
 
-func init() {
-configs := make(map[string]*gosql.Config)
-configs["default"] = &gosql.Config{
-Enable:  true,
-Driver:  "{{.Driver}}",
-Dsn:     "{{.Source}}",
-ShowSql: true,
-}
-
-//connection database
-gosql.Connect(configs)
-gosql.QueryRowx("select 1")
-}

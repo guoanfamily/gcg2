@@ -18,16 +18,6 @@ func TestGen(t *testing.T) {
 	orm.Gen("config.yaml", "init", "")
 }
 
-//func TestSave(t *testing.T)  {
-//	var ci  service.CompanyInfo
-//	var i int32 = 20
-//	s := "test2"
-//	ci.Id = 49
-//	ci.CompanyName=&s
-//	ci.PeopleNum = &i
-//	ci.Save()
-//}
-
 func TestProjectFolderName(t *testing.T) {
 	s, _ := os.Getwd()
 	folders := strings.Split(s, "\\")

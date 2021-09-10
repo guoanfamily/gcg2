@@ -2,40 +2,12 @@
 package api
 
 import (
-"reflect"
-"strconv"
+"gorm.io/gorm"
 )
 
 type Api struct {}
 
-
-func structcond(i interface{})(str string,args []interface{})  {
-where:="1=1"
-t := reflect.TypeOf(i)
-v := reflect.ValueOf(i)
-params:=1
-for k := 0; k < t.NumField(); k++ {
-hasval,val:= getval(v.Field(k))
-if hasval{
-where+=" and "+t.Field(k).Tag.Get("db")+"={{if eq .Driver "postgres"}}${{else}}?{{end}}"+strconv.Itoa(params)
-params++
-args= append(args, val)
-}
-}
-return where,args
-}
-
-func getval(field reflect.Value) (has bool,val interface{}) {
-switch field.Kind() {
-case reflect.Int:
-has=!field.IsZero()
-val=field.Int()
-case reflect.String:
-has=!field.IsZero()
-val=field.String()
-case reflect.Ptr:
-has=!field.IsNil()
-val=field.Interface()
-}
-return
-}
+var (
+Db     *gorm.DB
+params int
+)

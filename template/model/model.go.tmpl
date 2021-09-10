@@ -14,8 +14,3 @@ type {{upperCamel .TableName}} struct {
 func (p *{{upperCamel .TableName}}) TableName() string {
 return "{{.TableName}}"
 }
-
-func (p *{{upperCamel .TableName}}) PK() string {
-return "id"
-}
-
