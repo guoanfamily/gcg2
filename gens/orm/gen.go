@@ -33,8 +33,12 @@ var typeMap = [][]string{
 	{"date", "time.Time", "*time.Time"},
 	{"timestamp", "time.Time", "*time.Time"},
 	{"decimal", "float64", "*float64"},
+	{"decimal", "float64", "*float64"},
 	{"float", "float64", "*float64"},
+	{"float4", "float64", "*float64"},
+	{"numeric", "float64", "*float64"},
 	{"double", "float64", "*float64"},
+	{"bool", "bool", "*bool"},
 }
 
 // ColumnInfo table column info
