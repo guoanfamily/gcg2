@@ -17,6 +17,15 @@ res := Db.Create(&obj)
 return c.JSON(http.StatusOK, res.RowsAffected)
 }
 
+func (a *Api){{upperCamel .TableName}}BatchCreate(c echo.Context) error {
+objs := make([]model.{{upperCamel .TableName}}, 0)
+if err :=c.Bind(&objs);err!=nil{
+return c.JSON(http.StatusBadRequest, err.Error())
+}
+res := Db.Create(&objs)
+return c.JSON(http.StatusOK, res.RowsAffected)
+}
+
 func (a *Api){{upperCamel .TableName}}Update(c echo.Context) error {
 obj :=model.{{upperCamel .TableName}}{}
 if err :=c.Bind(&obj);err!=nil{
