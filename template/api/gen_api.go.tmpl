@@ -57,6 +57,25 @@ log.Println(res.Error.Error())
 return c.JSON(http.StatusOK,objs)
 }
 
+func (a *Api) {{upperCamel .TableName}}Page(c echo.Context) error {
+obj :=model.{{upperCamel .TableName}}{}
+if err := c.Bind(&obj); err != nil {
+return c.JSON(http.StatusBadRequest, err.Error())
+}
+objs := make([]model.{{upperCamel .TableName}}, 0)
+var count int64
+Db.Model(&model.{{upperCamel .TableName}}{}).Count(&count)
+res := Db.Scopes(Paginate(c)).Where(&obj).Find(&objs)
+if res.Error != nil {
+log.Println(res.Error.Error())
+}
+ar := make(map[string]interface{})
+ar["total"] = count
+ar[{{.TableName}}] = objs
+return c.JSON(http.StatusOK, ar)
+}
+
+
 func (a *Api){{upperCamel .TableName}}First(c echo.Context) error {
 obj :=model.{{upperCamel .TableName}}{}
 if err :=c.Bind(&obj);err!=nil{

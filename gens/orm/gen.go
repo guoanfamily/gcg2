@@ -88,6 +88,7 @@ func Gen(dbFile string, name string, tbs string) {
 		if isInit {
 			//生成api层公共代码
 			genutils.GenFileWithTargetPath("api/api.go.tmpl", "api/api.go", db)
+			genutils.GenFileWithTargetPath("api/paginate.go.tmpl", "api/api.go", db)
 			//生成main
 			db["ProjectName"] = getProjectFolderName()
 			genutils.GenFileWithTargetPath("main.go.tmpl", "main.go", db)
