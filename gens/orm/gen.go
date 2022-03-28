@@ -78,6 +78,7 @@ func Gen(dbFile string, name string, tbs string) {
 		db := v.(map[interface{}]interface{})
 		//生成表service代码
 		loadDBMetaInfo(tbs, db)
+		genutils.GenFileWithTargetPath("model/localTime.go.tmpl", "model/localTime.go", db)
 		sh.Command("gofmt", "-w", ".", sh.Dir("model")).Run()
 		//生成api层表相关代码
 		for _, tableMeta := range db["TableMetas"].([]interface{}) {

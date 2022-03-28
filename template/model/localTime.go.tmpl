@@ -1,0 +1,102 @@
+package model
+
+import (
+"database/sql/driver"
+"errors"
+"time"
+)
+
+const TimeFormat = "2006-01-02 15:04:05"
+
+type LocalTime time.Time
+
+func (t *LocalTime) UnmarshalJSON(data []byte) (err error) {
+// 空值不进行解析
+if len(data) == 2 {
+*t = LocalTime(time.Time{})
+return
+}
+tf := TimeFormat10
+if len(data) > 12 {
+tf = TimeFormat
+}
+// 指定解析的格式
+now, err := time.Parse(`"`+tf+`"`, string(data))
+*t = LocalTime(now)
+return
+}
+
+func (t LocalTime) MarshalJSON() ([]byte, error) {
+b := make([]byte, 0, len(TimeFormat)+2)
+b = append(b, '"')
+b = time.Time(t).AppendFormat(b, TimeFormat)
+b = append(b, '"')
+return b, nil
+}
+
+func (t LocalTime) Value() (driver.Value, error) {
+// MyTime 转换成 time.Time 类型
+tTime := time.Time(t)
+return tTime.Format(TimeFormat), nil
+}
+
+func (t *LocalTime) Scan(v interface{}) error {
+switch vt := v.(type) {
+case string:
+// 字符串转成 time.Time 类型
+tTime, _ := time.Parse(TimeFormat, vt)
+*t = LocalTime(tTime)
+case time.Time:
+*t = LocalTime(vt)
+default:
+return errors.New("类型处理错误")
+}
+return nil
+}
+
+/*
+localDate
+*/
+type LocalDate time.Time
+
+const TimeFormat10 = "2006-01-02"
+
+func (t *LocalDate) UnmarshalJSON(data []byte) (err error) {
+// 空值不进行解析
+if len(data) == 2 {
+*t = LocalDate(time.Time{})
+return
+}
+// 指定解析的格式
+now, err := time.Parse(`"`+TimeFormat10+`"`, string(data))
+*t = LocalDate(now)
+return
+}
+
+func (t LocalDate) MarshalJSON() ([]byte, error) {
+b := make([]byte, 0, len(TimeFormat10)+2)
+b = append(b, '"')
+b = time.Time(t).AppendFormat(b, TimeFormat10)
+b = append(b, '"')
+return b, nil
+}
+
+func (t LocalDate) Value() (driver.Value, error) {
+// MyTime 转换成 time.Time 类型
+tTime := time.Time(t)
+return tTime.Format(TimeFormat10), nil
+}
+
+func (t *LocalDate) Scan(v interface{}) error {
+switch vt := v.(type) {
+case string:
+// 字符串转成 time.Time 类型
+tTime, _ := time.Parse(TimeFormat10, vt)
+*t = LocalDate(tTime)
+case time.Time:
+*t = LocalDate(vt)
+default:
+return errors.New("类型处理错误")
+}
+return nil
+}
