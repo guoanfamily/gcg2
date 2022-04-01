@@ -71,7 +71,7 @@ log.Println(res.Error.Error())
 }
 ar := make(map[string]interface{})
 ar["total"] = count
-ar["{{.TableName}}"] = objs
+ar["data"] = objs
 return c.JSON(http.StatusOK, ar)
 }
 
