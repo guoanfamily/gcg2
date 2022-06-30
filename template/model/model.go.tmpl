@@ -2,15 +2,34 @@
 package model
 
 import (
+{{if eq .PrimaryKeyType "string"}}
+"fmt"
+"github.com/gofrs/uuid"
+"gorm.io/gorm"
+{{end}}
   "time"
 )
 var _ = time.Now
 
 type {{upperCamel .TableName}} struct {
   {{ range $i, $v := .Columns }}
-  {{upperCamel $v.Field}} {{$v.GoType}} `json:"{{$v.Field}}"`  // {{$v.Comment}} {{end}}
+  {{upperCamel $v.Field}} {{$v.GoType}} `json:"{{camel $v.Field}}"`  // {{$v.Comment}} {{end}}
 }
 
 func (p *{{upperCamel .TableName}}) TableName() string {
 return "{{.TableName}}"
 }
+
+{{if eq .PrimaryKeyType "string"}}
+func (t *{{upperCamel .TableName}}) BeforeCreate(tx *gorm.DB) error {
+if len(t.ID) > 0 {
+return nil
+}
+id, err := uuid.NewV4()
+if err != nil {
+return err
+}
+t.ID = fmt.Sprintf("%x", id)
+return nil
+}
+{{end}}

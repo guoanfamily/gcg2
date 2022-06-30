@@ -64,11 +64,10 @@ func loadDBMetaInfo(tables string, dbInfo map[interface{}]interface{}) {
 // laodTableMetaInfo 查询表结构元信息
 func loadTableMetaInfo(db *sqlx.DB, tableName, projectName string, driver string) interface{} {
 	var (
-		err               error
-		primaryKey        = "id"
-		primaryKeyType    = "int"
-		primaryKeyDefault = "0"
-		columnInfoList    []*ColumnInfo
+		err            error
+		primaryKey     = "id"
+		primaryKeyType = "string"
+		columnInfoList []*ColumnInfo
 	)
 	if driver == "mysql" {
 
@@ -89,17 +88,13 @@ func loadTableMetaInfo(db *sqlx.DB, tableName, projectName string, driver string
 		if c.Key == "PRI" || c.Key == "YES" {
 			primaryKey = c.Field
 			primaryKeyType = c.GoType
-			if primaryKeyType != "int" {
-				primaryKeyDefault = "\"\""
-			}
 		}
 	}
 	return map[interface{}]interface{}{
-		"ProjectName":       projectName,
-		"TableName":         tableName,
-		"PrimaryKey":        primaryKey,
-		"PrimaryKeyType":    primaryKeyType,
-		"PrimaryKeyDefault": primaryKeyDefault,
-		"Columns":           columnInfoList,
+		"ProjectName":    projectName,
+		"TableName":      tableName,
+		"PrimaryKey":     primaryKey,
+		"PrimaryKeyType": primaryKeyType,
+		"Columns":        columnInfoList,
 	}
 }
