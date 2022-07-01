@@ -8,6 +8,8 @@ _ "gorm.io/driver/postgres"
 "gorm.io/gorm"
 _ "github.com/go-sql-driver/mysql"
 "reflect"
+"regexp"
+"strings"
 "time"
 )
 
@@ -30,6 +32,23 @@ sqlDB.SetMaxOpenConns(100)
 sqlDB.SetConnMaxLifetime(time.Hour)
 }
 
+func CapitalizeFirst(s string) string {
+if s == "" {
+return s
+}
+first := s[:1]
+return strings.ToUpper(first) + s[1:]
+}
+
+func ConvertUrl(url string) string {
+var keyMatchRegex = regexp.MustCompile(`(\w+)`)
+converted := keyMatchRegex.ReplaceAllStringFunc(
+url,
+CapitalizeFirst,
+)
+return strings.ReplaceAll(converted, "/", "")
+}
+
 func main(){
 // Echo instance
 e := echo.New()
@@ -42,6 +61,7 @@ e.Use(middleware.CORS())
 //Common routers
 e.POST("/:funcname", func(context echo.Context) error{
 funcname:=context.Param("funcname")
+funcname := context.Param("funcname")
 method := reflect.ValueOf(&api.Api{}).MethodByName(funcname)
 if !method.IsValid() {
 return nil
