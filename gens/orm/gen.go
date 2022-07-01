@@ -3,6 +3,7 @@ package orm
 import (
 	"fmt"
 	"gcg2/gens/common"
+	"gcg2/gens/funcs"
 	sh "github.com/codeskyblue/go-sh"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -83,7 +84,7 @@ func Gen(dbFile string, name string, tbs string) {
 		//生成api层表相关代码
 		for _, tableMeta := range db["TableMetas"].([]interface{}) {
 			model := tableMeta.(map[interface{}]interface{})
-			genutils.GenFileWithTargetPath("api/gen_api.go.tmpl", "api/gen_"+model["TableName"].(string)+".go", tableMeta)
+			genutils.GenFileWithTargetPath("api/gen_api.go.tmpl", "api/gen_"+strings.TrimLeft(model["TableName"].(string), funcs.IgnoreTablePrefix)+".go", tableMeta)
 		}
 		sh.Command("gofmt", "-w", ".", sh.Dir("api")).Run()
 		if isInit {

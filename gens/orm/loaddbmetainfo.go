@@ -2,6 +2,7 @@ package orm
 
 import (
 	genutils "gcg2/gens/common"
+	"gcg2/gens/funcs"
 	utils "gcg2/gokits"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -13,7 +14,7 @@ import (
 const (
 	PSQLTABLEQUERY  string = "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
 	MYSQLTABLEQUERY string = "SHOW TABLES"
-	PSQLCOLUMNQUERY string = "SELECT A\n\t.attname AS field,\n\tconcat_ws ( '', T.typname, SUBSTRING ( format_type ( A.atttypid, A.atttypmod ) FROM '\\(.*\\)' ) ) AS TYPE,\n\te.is_nullable AS NULL,\n\te.is_identity AS KEY,\n\td.description AS COMMENT \nFROM\n\tpg_class C,\n\tpg_attribute A,\n\tpg_type T,\n\tpg_description d,\n\tinformation_schema.COLUMNS e \nWHERE\n\tC.relname = e.TABLE_NAME \n\tAND e.table_schema = 'public' \n\tAND e.COLUMN_NAME = A.attname \n\tAND A.attnum > 0 \n\tAND A.attrelid = C.oid \n\tAND A.atttypid = T.oid \n\tAND d.objoid = A.attrelid \n\tAND d.objsubid = A.attnum \n\tAND C.relname = '"
+	PSQLCOLUMNQUERY string = "SELECT COALESCE(col_description(a.attrelid, a.attnum),'') as comment, concat_ws ( '', T.typname, SUBSTRING ( format_type ( A.atttypid, A.atttypmod ) FROM '\\(.*\\)' ) ) AS TYPE, a.attname as field, CASE WHEN a.attnotnull='t' THEN 'NO' else 'YES' END as null, CASE WHEN p.contype = 'p' THEN 'YES' ELSE 'NO' END as key FROM pg_class c join pg_attribute a on a.attrelid = c.oid and a.attnum > 0\n\tLEFT JOIN pg_constraint p ON p.conrelid = c.oid AND a.attnum = ANY (p.conkey)\n\tjoin pg_type T on A.atttypid = T.oid \nwhere\n\tc.relname = '"
 )
 
 // loadDBMetaInfo 查询db元信息
@@ -27,6 +28,9 @@ func loadDBMetaInfo(tables string, dbInfo map[interface{}]interface{}) {
 	)
 	source := dbInfo["Source"].(string)
 	driver := dbInfo["Driver"].(string)
+	if dbInfo["IgnoreTablePrefix"] != nil {
+		funcs.IgnoreTablePrefix = dbInfo["IgnoreTablePrefix"].(string)
+	}
 	db, err = sqlx.Connect(driver, source)
 	if err != nil {
 		log.Fatalln(err)
@@ -54,7 +58,7 @@ func loadDBMetaInfo(tables string, dbInfo map[interface{}]interface{}) {
 			tableMeta = loadTableMetaInfo(db, dbt, projectName, driver)
 			model := tableMeta.(map[interface{}]interface{})
 			//model层代码生成 数据对象生成
-			genutils.GenFileWithTargetPath("model/model.go.tmpl", "model/"+model["TableName"].(string)+".go", tableMeta)
+			genutils.GenFileWithTargetPath("model/model.go.tmpl", "model/"+strings.TrimLeft(model["TableName"].(string), funcs.IgnoreTablePrefix)+".go", tableMeta)
 			tableMetas = append(tableMetas, tableMeta)
 		}
 	}

@@ -34,6 +34,7 @@ var FuncMap = map[string]interface{}{
 	"hasPrefix":      strings.HasPrefix,
 	"nullableType":   nullableType,
 }
+var IgnoreTablePrefix string
 
 type APIArgument struct {
 	Name     string
@@ -160,6 +161,7 @@ func UpperCamel(s string) string {
 	if strings.EqualFold(s, "id") {
 		return "ID"
 	}
+	s = strings.TrimLeft(s, IgnoreTablePrefix)
 	return CapitalizeFirst(Camel(s))
 }
 
